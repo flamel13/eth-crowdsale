@@ -1,0 +1,105 @@
+<!-- Loads the path to your static files -->
+{% load staticfiles %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Reservations{% endblock %}</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <title>ACME Reservations</title>
+
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">
+    <img src="http://i65.tinypic.com/1sh5ap.png" width="210" height="64" class="d-inline-block align-top" alt="">
+    <b></b>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="/reservations">Home <span class="sr-only">(current)</span></a>
+        </li>
+        {% if not user.is_authenticated %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'reservations:register' %}">Register<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'reservations:login_user' %}">Login<span class="sr-only">(current)</span></a>
+        </li>
+        {% endif %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'reservations:user_reservations' %}">Your donations<span class="sr-only">(current)</span></a>
+        </li>
+        {% if user.is_authenticated %}
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'reservations:add_campaign' %}">Add Campaign<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'reservations:upwallet' %}">You are logged as: {{ request.user.username }}<span class="sr-only">(current)</span></a>
+            </li>
+        </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="{% url 'reservations:logout_user' %}" class="navbar-btn btn-warning btn pull-right">Logout</a>
+                </li>
+            </ul>
+        {% endif %}
+
+    </div>
+  </nav>
+
+
+  <div class="card text-left">
+    <div class="card-header">
+      Take a look at your donations
+    </div>
+    <div class="card-body">
+      <h2 class="card-title">User Contributions: {{ request.user.username }}</h2>
+      <br/>
+                              {% if like_list %}
+                                  <ul>
+                                  {% for x in like_list %}
+                                    {% for y in event_list %}
+                                      {% if x.pref_link.id == y.id %}
+                                      <ul class="list-group">
+                                        <a href="/reservations/{{ y.id }}/" class="list-group-item list-group-item-action">{{ y.name }}</a>
+                                      </ul>
+                                      {% endif %}
+                                    {% endfor %}
+                                  {% endfor %}
+                                  </ul>
+                              {% else %}
+                                  <p>No event reservations</p>
+                              {% endif %}
+                              </div>
+                          </div>
+
+
+
+
+
+
+<footer class="bg-dark text-white mt-4">
+    <div class="container-fluid py-3">
+        <div class="row">
+            <div class="col-md-3">
+                <h5>Footer</h5></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">I stay at the bottom of the viewport! <span class="small"><br>Unless the page content pushes me further.</span></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3 text-right small align-self-end">©2017 Brand, Inc.</div>
+        </div>
+    </div>
+</footer>

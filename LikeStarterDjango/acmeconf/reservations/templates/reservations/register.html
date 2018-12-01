@@ -1,0 +1,42 @@
+<!-- to display the form the directory is localhost/reservations/register -->
+{% extends 'reservations/base_visitor.html' %}
+{% block title %}Register{% endblock %}
+{% block register_active %}active{% endblock %}
+
+{% block body %}
+<div class="card text-left">
+  <div class="card-header">
+    Signup for an account
+  </div>
+  <div class="card-body">
+    <h2 class="card-title">Signup</h2>
+    <br/>
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                    {% endif %}
+                    <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+
+                              <div class="card text-white bg-info mb-3" style="max-width: 18rem;">
+                                  <div class="card-body">
+                                    <p class="card-text">Insert your public key in the Wallet field</p>
+                                  </div>
+                                </div>
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

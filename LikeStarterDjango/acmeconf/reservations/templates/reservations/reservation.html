@@ -1,0 +1,76 @@
+
+
+<!-- to display the form the directory is localhost/reservations/register -->
+{% extends 'reservations/base_visitor.html' %}
+{% block title %}Event Reservation{% endblock %}
+{% block register_active %}active{% endblock %}
+{% load staticfiles %}
+
+{% block body %}
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+
+<script>
+$(document).ready(function(){
+    $('#1').fadeOut('slow');
+    $('#id_is_staff').change(function(){
+        if(this.checked)
+            $('#1').fadeIn('slow');
+        else
+            $('#1').fadeOut('slow');
+    });
+});
+
+$(document).ready(function(){
+    $('#id_is_staff').change(function(){
+        if(this.checked)
+            $('#2').fadeOut('slow');
+        else
+            $('#2').fadeIn('slow');
+    });
+});
+</script>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3>Event Reservation</h3>
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                    {% endif %}
+                    {% ifequal request.session.except_server 2 %}
+                      <div class="alert alert-error">
+                         <div class="well"><font color="FireBrick"><strong>Bank Server Error!</strong></font></div>
+                      </div>
+                    {% endifequal  %}
+                    <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
+                    <img src="{% static "ebank.jpg" %}" style="max-height: 83px; max-width: 200px;"/>
+                    <div class="well"><font color="FireBrick"><strong>Please login with your EBank account to pay the ticket via Wire Transfer</strong></font></div>
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        {% ifequal request.session.except 1 %}
+                          <div class="alert alert-error">
+                             <div class="well"><font color="FireBrick"><strong>Wrong username or password!</strong></font></div>
+                          </div>
+                        {% endifequal  %}
+                        <div class="well" id='1'><font color="MidnightBlue"><p id="staff_price"><strong>Staff Ticket Price: {{ price_staff }}$</strong></p></font></div>
+                        <div class="well" id='2'><font color="DodgerBlue"><p id="normal_price"><strong>Standard Ticket Price: {{ price_standard }}$</strong></p></font></div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

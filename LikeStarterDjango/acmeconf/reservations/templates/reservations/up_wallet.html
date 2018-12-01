@@ -1,0 +1,26 @@
+{% extends 'reservations/base_visitor.html' %}
+{% load staticfiles %}
+{% block body %}
+
+<div class="card text-left">
+  <div class="card-header">
+    Modify the address of your wallet
+  </div>
+  <div class="card-body">
+    <h2 class="card-title">{{ user.username }} Wallet <img src="http://icons.iconarchive.com/icons/flat-icons.com/flat/256/Wallet-icon.png" alt="Smiley face" height="64" width="64"> </h2>
+    <br/>
+
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+
+    {{ form.as_p }}
+    <button type="submit" class="navbar-btn btn-danger btn pull-right">Update Informations</button>
+    </form>
+
+
+
+                </div>
+            </div>
+        </div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'reservations/base_visitor.html' %}
+
+{% block body %}
+
+<div class="card text-left">
+  <div class="card-header">
+    Event Details
+  </div>
+  <div class="card-body">
+    <h2 class="card-title">{{ event.name }} is gallery of {{ event.user }}</h2>
+    <img style="height: 250px; object-fit: cover;" class="card-img-top" src="/{{event.crowd_pic.url}}" alt="Card image cap">
+
+    <br/>
+    <br/>
+
+    {% for x in wallets %}
+      {% if x.accountholder == event.user %}
+      <h3> Donate me! </h3>
+      <ul class="list-group">
+        <li class="list-group-item list-group-item-success">Wallet address: {{ x.public_key }}</li>
+      </ul>
+      {% endif %}
+    {% endfor %}
+
+    <br/>
+    <br/>
+
+    {% for x in contracts %}
+      {% if x.artist == event.user %}
+        <ul class="list-group">
+          <li class="list-group-item list-group-item-action">Likecoin Contract Address: {{ x.likoin_address }}</li>
+        </ul>
+        <ul class="list-group">
+          <li class="list-group-item list-group-item-action">Buck Contract Address: {{ x.buck_address }}</li>
+        </ul>
+        <ul class="list-group">
+          <li class="list-group-item list-group-item-action">Crowdsale Contract Address: {{ x.crowdsale_address }}</li>
+        </ul>
+      {% endif %}
+    {% endfor %}
+
+
+<!--
+
+    {% for x in reservations %}
+      {% if x.user == user.id and x.event == event.id %}
+        <a href="/reservations/{{ event.id }}/delete_confirm"> <button class="btn btn-danger pull-right">Delete Reservation</button></a>
+        <script>$('#book').hide();</script>
+      {% endif %}
+      {% if x.user == user.id and x.event == event.id and x.is_staff == True and event.is_open_contr == True%}
+        <a href="/reservations/{{ event.id }}/upload"> <button class="btn btn-warning">Upload Files</button></a>
+      {% endif %}
+    {% endfor %}
+    -->
+</div>
+
+
+
+
+{% endblock %}

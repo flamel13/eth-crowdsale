@@ -1,0 +1,18 @@
+{% extends 'reservations/base_visitor.html' %}
+{% load staticfiles %}
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                  <h3>Reservation deleted!</h3>
+                  <a href="{% url 'reservations:index' %}" class="navbar-btn btn-danger btn pull-right">Return to Homepage</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

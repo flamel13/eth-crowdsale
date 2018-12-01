@@ -1,0 +1,21 @@
+<!-- to display the form the directory is localhost/reservations/register -->
+{% extends 'reservations/base_visitor.html' %}
+{% load staticfiles %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    <img src="{% static "eventbooked.jpg" %}" style="max-height: 295px; max-width: 708px;"/>
+
+                    <a href="{% url 'reservations:index' %}" class="navbar-btn btn-danger btn pull-right">Return to Homepage</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

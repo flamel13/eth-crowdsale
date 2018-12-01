@@ -1,0 +1,244 @@
+
+
+<!-- Loads the path to your static files -->
+{% load staticfiles %}
+
+{% csrf_token %}
+
+<head>
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+<title>LikeStarter - An ETH Crowdfunding DAPP</title>
+</head>
+
+<nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">
+  <img src="http://i65.tinypic.com/1sh5ap.png" width="210" height="64" class="d-inline-block align-top" alt="">
+  <b></b>
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="/reservations">Home <span class="sr-only">(current)</span></a>
+      </li>
+      {% if not user.is_authenticated %}
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'reservations:register' %}">Register<span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'reservations:login_user' %}">Login<span class="sr-only">(current)</span></a>
+      </li>
+      {% endif %}
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'reservations:user_reservations' %}">Your donations<span class="sr-only">(current)</span></a>
+      </li>
+      {% if user.is_authenticated %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'reservations:add_campaign' %}">Add Campaign<span class="sr-only">(current)</span></a>
+        </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'reservations:upwallet' %}">You are logged as: {{ request.user.username }}<span class="sr-only">(current)</span></a>
+          </li>
+      </ul>
+          <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                  <a href="{% url 'reservations:logout_user' %}" class="navbar-btn btn-warning btn pull-right">Logout</a>
+              </li>
+          </ul>
+      {% endif %}
+
+  </div>
+</nav>
+
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    {% if latest_event_list %}
+                    <br/>
+                    <div class="card">
+                      <div class="card-body">
+                        <h2>Latest Projects List 💰</h2>
+                      </div>
+                    </div>
+                    <br />
+                        {% for event in latest_event_list %}
+                        <div class="card-deck">
+                          <div class="card">
+                            {% load static %}
+                            <img style="height: 250px; object-fit: cover;" class="card-img-top" src="/{{event.crowd_pic.url}}" alt="Card image cap">
+                            <div class="card-body">
+                              <a href="/reservations/{{ event.id }}/" class="text-danger"><h5 class="card-title">{{ event.name }}</h5></a>
+                              <p class="card-text">{{ event.description }}</p>
+                              {% for x in contracts_list %}
+                                {% if event.user == x.artist %}
+                                <ul class="list-group">
+                                  <li class="list-group-item list-group-item-info">Likoin address: {{ x.likoin_address }}</li>
+                                </ul>
+                                <ul class="list-group">
+                                  <li class="list-group-item list-group-item-info">Buck address: {{ x.buck_address }}</li>
+                                </ul>
+                                <ul class="list-group">
+                                  <li class="list-group-item list-group-item-info">Contract address: {{ x.crowdsale_address }}</li>
+                                </ul>
+                                {% endif %}
+                              {% endfor %}
+                              <p id="count-{{ event.id }}">{{ event.likes }} Likes</p>
+                              <p id="like-user-{{ event.id }}">
+                              <p id="like-user-{{ event.id }}">
+                              <p id="count-ok-{{ event.id }}">
+                              {% for like_user in like.like_user_set.all %}
+                                {{ like_user.user.username }}
+                              {% endfor %}
+                              </p>
+
+                              <input type="button" class="like" name="{{ event.id }}" value="Like ♡"
+                              style="background-color: #ff6347; /* red */
+                                      border: none;
+                                      color: white;
+                                      padding: 15px 32px;
+                                      text-align: center;
+                                      text-decoration: none;
+                                      display: inline-block;
+                                      font-size: 16px;
+                                      border-radius: 4px;">
+
+                            </div>
+                          </div>
+                        </div>
+                        <br />
+
+
+                        {% endfor %}
+                        <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.36/dist/web3.min.js"></script>
+
+
+                        <script type="text/javascript">
+                          //like function
+                          $(".like").click(function(){
+                            var pk = $(this).attr('name')
+                            $.ajax({
+                              type: "POST",
+                              url: "{% url 'reservations:like_url' %}",
+                              data: {'pk': pk, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                              dataType: "json",
+                              success: function(response){
+                                alert(response.message);
+                                $("#count-"+pk).html(response.like_count+" Likes");
+                                var users = $("#like-user-"+pk).text();
+                                if(users.indexOf(response.nickname) != -1){
+                                  $("#like-user-"+pk).text(users.replace(response.nickname, ""));
+                                }else{
+                                  $("#count-{{ event.id }}").hide();
+                                  var likes = response.like_count;
+                                  $("#count-ok-{{ event.id }}").text(likes + " Likes");
+
+
+                                  //start web3.js
+                                  if (typeof web3 !== "undefined") {
+                                    // Use Mist/MetaMask's provider
+                                    web3 = new Web3(web3.currentProvider);
+                                  } else {
+                                    console.log("No web3? You should consider trying MetaMask!");
+                                    // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+                                    web3 = new Web3(
+                                      new Web3.providers.HttpProvider("https://localhost:7545")
+                                    );
+                                  }
+
+                                  // Webjs effective functions.
+
+                                  web3.eth.getAccounts(function(error, accounts) {
+                                    if (!error) {
+                                      web3.eth.getBalance(accounts[0], function(error, balance) {
+                                        if (!error) {
+                                          console.log(
+                                            "Your account: " +
+                                              accounts[0]
+                                          );
+
+                                          console.log(response.crowdsale_address);
+
+                                          var abi = {{ contractABI_crowdsale | safe }};
+                                          var abi_coin = {{ contractABI_likoin | safe }};
+
+                                          var crowdSale = new web3.eth.Contract(abi, response.crowdsale_address);
+                                          var likOin = new web3.eth.Contract(abi_coin, response.likoin_address);
+
+                                          console.log(crowdSale);
+                                          console.log(likOin);
+                                          console.log(response.sender_wallet)
+
+                                          likOin.methods.name().call({from: response.sender_wallet}, function(error, result){
+                                            console.log(result);
+                                          });
+
+                                          likOin.methods.mint(accounts[0], 10000).send({from: accounts[0]})
+                                            .then(function(receipt){
+                                                console.log(receipt);
+                                            });
+
+
+                                        } else {
+                                          console.error(error);
+                                        }
+                                      });
+                                    } else {
+                                      console.error(error);
+                                    }
+                                  });
+
+                                  //finish webjs
+                                }
+
+                              },
+                              //need to complete the returned context, actually he enters in the error function for this
+                              error: function(request, status){
+                                alert("Devi essere loggato!");
+                              },
+                            });
+                          });
+
+
+                        </script>
+
+                    {% else %}
+                        <p>No events are available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+
+<footer class="bg-dark text-white mt-4">
+    <div class="container-fluid py-3">
+        <div class="row">
+            <div class="col-md-3">
+                <h5>Footer</h5></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-6"> <img src="https://metamask.io/img/metamask.png" alt="Smiley face" height="42" width="42"> <img src="https://user-images.githubusercontent.com/5788982/27623008-a5e8c956-5bda-11e7-9246-d17205287ad3.png" alt="Smiley face" height="42" width="42"><span class="small"><br>Testo.</span></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3 text-right small align-self-end">©2018 Nome.</div>
+        </div>
+    </div>
+</footer>

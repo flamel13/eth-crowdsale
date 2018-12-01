@@ -1,0 +1,14 @@
+body {
+  background-color: white;
+}
+
+.navbar{
+  border-radius: 0;
+}
+.navbar {
+ min-height: 80px;
+}
+
+#price_text {
+        display : none
+}

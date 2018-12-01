@@ -1,0 +1,78 @@
+{% extends 'reservations/base_visitor.html' %}
+{% load staticfiles %}
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    <h3>Block</h3>
+
+                    {{ ethBlockNumber }}
+                    {{ contractAddress }}
+                    {{ txhash }}
+
+                    {{ contractABI }}
+
+
+                    <!-- web3.js integration start -->
+
+                    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.36/dist/web3.min.js"></script>                   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+                    <script type="text/javascript">
+
+                      window.addEventListener("load", function() {
+                        // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+                        if (typeof web3 !== "undefined") {
+                          // Use Mist/MetaMask's provider
+                          window.web3 = new Web3(web3.currentProvider);
+                        } else {
+                          console.log("No web3? You should consider trying MetaMask!");
+                          // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+                          window.web3 = new Web3(
+                            new Web3.providers.HttpProvider("https://localhost:7545")
+                          );
+                        }
+
+                        // APP >
+
+                        web3.eth.getAccounts(function(error, accounts) {
+                          if (!error) {
+                            web3.eth.getBalance(accounts[0], function(error, balance) {
+                              if (!error) {
+                                console.log(
+                                  "Your account: " +
+                                    accounts[0]
+                                );
+
+                                console.log("Contract address: {{ contractAddress }}");
+
+                                var abi = {{ contractABI | safe }};
+
+                                var myContract = new web3.eth.Contract(abi, '{{ contractAddress }}');
+
+                                console.log(myContract);
+
+                              } else {
+                                console.error(error);
+                              }
+                            });
+                          } else {
+                            console.error(error);
+                          }
+                        });
+                      });
+
+
+                    </script>
+                    <!-- web3.js integration finish -->
+
+                    <a href="{% url 'reservations:index' %}" class="navbar-btn btn-danger btn pull-right">Return to Homepage</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

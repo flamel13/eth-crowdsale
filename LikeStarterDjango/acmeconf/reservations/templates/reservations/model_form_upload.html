@@ -1,0 +1,25 @@
+{% extends 'reservations/base_visitor.html' %}
+{% load staticfiles %}
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    <h3>Upload your contribute</h3>
+
+                    <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Upload</button>
+                    </form>
+
+                    <a href="{% url 'reservations:index' %}" class="navbar-btn btn-danger btn pull-right">Return to Homepage</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
