@@ -1,6 +1,7 @@
 pragma solidity ^0.4.24;
 
-import "./Likoin.sol";
+import "./properties/Assignable.sol";
+import "./tokens/Likoin.sol";
 
 /**
  * @title Crowdsale
@@ -8,14 +9,11 @@ import "./Likoin.sol";
  * @dev Implementation of the base contract for managing a token crowdsale.
  * Originally based on code by OpenZeppelin: https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/crowdsale/Crowdsale.sol
  */
-contract Crowdsale {
+contract Crowdsale is Assignable{
   using SafeMath for uint256;
 
   // The token being sold
   Likoin private _token;
-
-  // Address where funds are collected
-  address private _wallet;
 
   // How many token units a buyer gets per wei.
   uint256 private _rate;
@@ -39,7 +37,7 @@ contract Crowdsale {
     require(token != address(0));
 
     _rate = rate;
-    _wallet = wallet;
+    _assignee = wallet;
     _token = token;
   }
 
@@ -67,7 +65,7 @@ contract Crowdsale {
     _token.mint(beneficiary, tokens);
     emit TokensPurchased(msg.sender, beneficiary, weiAmount, tokens);
 
-    _wallet.transfer(msg.value);
+    _assignee.transfer(msg.value);
   }
 
   /**
@@ -82,13 +80,6 @@ contract Crowdsale {
    */
   function token() public view returns(Likoin) {
     return _token;
-  }
-
-  /**
-   * @return the address where funds are collected.
-   */
-  function wallet() public view returns(address) {
-    return _wallet;
   }
 
   /**

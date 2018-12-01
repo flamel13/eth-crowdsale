@@ -1,8 +1,16 @@
 pragma solidity ^0.4.24;
 
-import "./Likoin.sol";
+import "./properties/Ownable.sol";
+import "./tokens/Likoin.sol";
+import "./ArtifactsManager.sol";
 
-contract Voting {
+/**
+ * @title Contract used to vote Artifacts proposals
+ */
+contract Voting is Ownable {
+
+  // The artifacts manager
+  ArtifactsManager private _artifactsManager;
 
   // The token used for votes weights
   Likoin private _token;
@@ -18,12 +26,6 @@ contract Voting {
  
   // Number of Proposals
   uint private _numProposals;
-
-  // Voting owner
-  address private _owner;
-
-  // Voting assignee, entity voting depends on 
-  address private _assignee;
 
   /**
    * Event for a proposal added
@@ -94,18 +96,10 @@ contract Voting {
   }
 
   /**
-   * @dev Modifier to allow only the owner
+   * @dev Modifier to allow only the ArtifactsManager contract
    */
-  modifier onlyOwner() {
-    require(isOwner(msg.sender));
-    _;
-  }
-
-  /**
-   * @dev Modifier to allow only the assignee
-   */
-  modifier onlyAssignee() {
-    require(isAssignee(msg.sender));
+  modifier onlyArtifactsManager() {
+    require(isArtifactsManager(msg.sender));
     _;
   }
 
@@ -116,19 +110,17 @@ contract Voting {
     require(proposalID < _numProposals);
     Proposal storage p = _proposals[proposalID];  
     require (!p.executed);
-    require (p.balancesSnapshot[msg.sender] > 0 || msg.sender == _assignee || msg.sender == _owner);
+    require (p.balancesSnapshot[msg.sender] > 0 || isArtifactsManager(msg.sender));
     _;
   }
 
   /**
-   * @param assignee Address of the entity vote depends on 
    * @param token Address of the token used for weight
    * @param minimumQuorumForProposals Number used to validate a vote in the execution
    * @param minutesForDebate Hours required before execution
    */
-  constructor (address assignee, Likoin token, uint minimumQuorumForProposals, uint minutesForDebate) public {
+  constructor (Likoin token, uint minimumQuorumForProposals, uint minutesForDebate) public {
     _owner = msg.sender;
-    _assignee = assignee;
     _token = token;
 
     changeVotingRules(minimumQuorumForProposals, minutesForDebate);
@@ -137,7 +129,7 @@ contract Voting {
   /**
    * @dev Add Proposal
    */
-  function newProposal(uint propArtifact, uint buckAmount, string memory artifactDescription) onlyAssignee public returns (uint proposalID) {
+  function newProposal(uint propArtifact, uint buckAmount, string memory artifactDescription) onlyArtifactsManager public returns (uint proposalID) {
     proposalID = _numProposals++;
     Proposal storage p = _proposals[proposalID];
     p.proposedArtifact = propArtifact;
@@ -237,7 +229,7 @@ contract Voting {
 
     p.executed = true;
     uint256 tmpMax = 0;
-    uint256 tmpTotal = p.suggestions[0].votesQuantity;
+    uint256 tmpTotal = p.suggestions[tmpMax].votesQuantity;
     for(uint i = 1; i < p.numSuggestions; i++){
       tmpTotal += p.suggestions[i].votesQuantity;
       if(p.suggestions[i].votesQuantity > p.suggestions[tmpMax].votesQuantity) {
@@ -247,7 +239,8 @@ contract Voting {
     
     if(tmpTotal > _minimumQuorum){
       p.proposalPassed = true;
-      p.finalResult = 0;
+      p.finalResult = p.suggestions[tmpMax].amount;
+      _artifactsManager.approveArtifact(p.proposedArtifact, p.finalResult);
     } else {
       p.proposalPassed = false;
     }
@@ -263,6 +256,13 @@ contract Voting {
     _debatingPeriodInMinutes = minutesForDebate;
 
     emit ChangeOfRules(minimumQuorumForProposals, minutesForDebate);
+  }
+
+  /**
+   * @dev Add Artifacts Manager
+   */
+  function addArtifactsManager(ArtifactsManager am) public onlyOwner {
+    _artifactsManager = am;
   }
 
   /**
@@ -370,33 +370,11 @@ contract Voting {
     return _proposals[proposalID].votes[account].suggestionID == suggestionID;
   }
 
-
   /**
-  * @return Owner of voting
-  */
-  function owner() public view returns (address) {
-    return _owner;
-  }
-
-  /**
-   * @dev Function indicating if account is owner 
+   * @dev Function indicating if account is ArtifactsManager contract 
    */
-  function isOwner(address account) public view returns (bool) {
-    return _owner == account;
-  }
-
-  /**
-  * @return Assignee of voting
-  */
-  function assignee() public view returns (address) {
-    return _assignee;
-  }
-
-  /**
-   * @dev Function indicating if account is assignee 
-   */
-  function isAssignee(address account) public view returns (bool) {
-    return _assignee == account;
+  function isArtifactsManager(address account) public view returns (bool) {
+    return _artifactsManager == account;
   }
 }
 

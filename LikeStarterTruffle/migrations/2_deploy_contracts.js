@@ -1,7 +1,8 @@
-const Likoin = artifacts.require('./Likoin.sol');
-const Buck = artifacts.require('./Buck.sol');
+const Likoin = artifacts.require('./tokens/Likoin.sol');
+const Buck = artifacts.require('./tokens/Buck.sol');
 const Crowdsale = artifacts.require('./Crowdsale.sol');
 const Voting = artifacts.require('./Voting.sol');
+const ArtifactsManager = artifacts.require('./ArtifactsManager.sol');
 
 module.exports = function(deployer, network, accounts) {
     const rate = new web3.BigNumber(1000);
@@ -38,10 +39,17 @@ module.exports = function(deployer, network, accounts) {
         .then(() => {
             return deployer.deploy(
                 Voting,
-                assignee,
                 Likoin.address,
                 1,
                 0
+            );
+        })
+        .then(() => {
+            return deployer.deploy(
+                ArtifactsManager,
+                assignee,
+                Voting.address,
+                Buck.address
             );
         });
 };

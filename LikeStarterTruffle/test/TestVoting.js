@@ -1,5 +1,7 @@
 const Likoin = artifacts.require("Likoin.sol");
+const Buck = artifacts.require("Buck.sol");
 const Voting = artifacts.require("Voting.sol");
+const ArtifactsManager = artifacts.require("ArtifactsManager.sol");
 
 contract('Voting', accounts => {
   var owner = accounts[0];
@@ -11,10 +13,12 @@ contract('Voting', accounts => {
   it("should set a new proposal",  async () => {
     const vot = await Voting.deployed();
     const token = await Likoin.deployed();
-    await token.mint(bob, 100000000000000000, {from: owner});
+    const am = await ArtifactsManager.deployed();
+    await token.mint(bob, 30000000000000000000, {from: owner});
     await token.mint(alice, 100000000000000000, {from: owner});
-    await token.mint(carlo, 50000000000000000, {from: owner});
-    await vot.newProposal(1, 5000, "Compra ora", {from: assignee});
+    //await token.mint(carlo, 50000000000000000, {from: owner});
+    await vot.addArtifactsManager(ArtifactsManager.address, {from: owner});
+    await am.proposeArtifact(1, "Compra ora", 5000, {from: assignee});
     bal = await vot.getProposalIdByArtifact(1);
     assert.equal(bal.toNumber(), 0, "Proposal was not correctly set");
   });
@@ -50,6 +54,22 @@ contract('Voting', accounts => {
     bal = await vot.isExecuted(0);
     bal2 = await vot.getProposalFinalResult(0);
     assert.equal(bal, true, "Execute was not correct");
-    assert.equal(bal2.toNumber(), 0, "Vote was not correct");
+    assert.equal(bal2.toNumber(), 5000, "Vote was not correct");
+  });
+  it("should add price to artifact",  async () => {
+    const am = await ArtifactsManager.deployed();
+    bal = await am.isArtifactApproved(1);
+    assert.equal(bal, true, "Execute was not correct");
+    bal2 = await am.getArtifactPriceByID(1);
+    assert.equal(bal2.toNumber(), 5000, "Execute was not correct");
+  });
+  it("should buy an artifact",  async () => {
+    const am = await ArtifactsManager.deployed();
+    const buck = await Buck.deployed();
+    await buck.addMinter(ArtifactsManager.address, {from: owner});
+    await buck.mint(bob, 100000000000000000, {from: owner});
+    await am.buyArtifact(1, bob, {from: bob});
+    bal = await am.ownership(bob, 1);
+    assert.equal(bal, true, "Purchrase was not correct");
   });
 });

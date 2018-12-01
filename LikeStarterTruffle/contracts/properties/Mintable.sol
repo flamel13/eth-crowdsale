@@ -1,12 +1,11 @@
 pragma solidity ^0.4.24;
 
+import "./Ownable.sol";
+
 /**
  * @title Mintable token
  */
-contract Mintable {
-
-  // Token owner
-  address _owner;
+contract Mintable is Ownable{
 
   // Minters allowed to generate new tokens
   mapping (address => bool) _minters;
@@ -20,14 +19,6 @@ contract Mintable {
    * Event for removing a minter
    */
   event MinterRemoved(address indexed account);
-
-  /**
-   * @dev Modifier to allow only the owner
-   */
-  modifier onlyOwner() {
-    require(isOwner(msg.sender));
-    _;
-  }
 
   /**
    * @dev Modifier to allow only a minter
@@ -85,20 +76,6 @@ contract Mintable {
 
     _minters[account] = false;
     emit MinterRemoved(account);
-  }
-
-  /**
-  * @dev Owner of token
-  */
-  function owner() public view returns (address) {
-    return _owner;
-  }
-
-  /**
-   * @dev Function indicating if account is owner 
-   */
-  function isOwner(address account) public view returns (bool) {
-    return _owner == account;
   }
 
   /**

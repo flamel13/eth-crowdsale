@@ -1,12 +1,13 @@
 pragma solidity ^0.4.24;
 
-import "./Mintable.sol";
-import "./SafeMath.sol";
+import "../properties/Mintable.sol";
+import "../properties/Assignable.sol";
+import "../utils/SafeMath.sol";
 
 /**
  * @title Simple token
  */
-contract SimpleToken is Mintable {
+contract SimpleToken is Mintable, Assignable {
   using SafeMath for uint256;
 
   // Token name 
@@ -17,9 +18,6 @@ contract SimpleToken is Mintable {
 
   // Decimal places  
   uint8 constant _decimals = 18; 
-  
-  // Token assignee, entity token depends on 
-  address _assignee;
 
   // Total supply
   uint256 _totalSupply;
@@ -27,7 +25,7 @@ contract SimpleToken is Mintable {
   /**
    * Event for token transfer
    */
-  event Transfer( address indexed from, address indexed to, uint256 value);
+  event Transfer(address indexed from, address indexed to, uint256 value);
 
   /**
   * @dev Name of token
@@ -48,13 +46,6 @@ contract SimpleToken is Mintable {
   */
   function decimals() public view returns (uint8) {
     return _decimals;
-  }
-
-  /**
-  * @dev Assignee of token
-  */
-  function assignee() public view returns (address) {
-    return _assignee;
   }
 
   /**
