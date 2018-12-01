@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Reservations{% endblock %}</title>
+    <title>{% block title %}LikeStarter - An ETH Crowdfunding DAPP{% endblock %}</title>
     {% load staticfiles %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-    <title>ACME Reservations</title>
+    <title>LikeStarter - An ETH Crowdfunding DAPP</title>
 
 </head>
 <body>
@@ -39,7 +39,7 @@
         </li>
         {% if user.is_authenticated %}
             <li class="nav-item active">
-              <a class="nav-link" href="{% url 'reservations:add_campaign' %}">Add Campaign<span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="{% url 'reservations:add_campaign' %}">Add post<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item active">
               <a class="nav-link" href="{% url 'reservations:upwallet' %}">You are logged as: {{ request.user.username }}<span class="sr-only">(current)</span></a>
@@ -63,15 +63,15 @@
     <div class="container-fluid py-3">
         <div class="row">
             <div class="col-md-3">
-                <h5>Footer</h5></div>
+                <h5></h5></div>
             <div class="col-md-3"></div>
             <div class="col-md-3"></div>
             <div class="col-md-3"></div>
         </div>
         <div class="row">
-            <div class="col-md-6">I stay at the bottom of the viewport! <span class="small"><br>Unless the page content pushes me further.</span></div>
+            <div class="col-md-6"> <img src=""> <img src="/static/FOOTER.png" alt="Smiley face" height="128" width="300"><span class="small"></div>
             <div class="col-md-3"></div>
-            <div class="col-md-3 text-right small align-self-end">©2017 Brand, Inc.</div>
+            <div class="col-md-3 text-right small align-self-end">©2018 LikeStarter.</div>
         </div>
     </div>
 </footer>
