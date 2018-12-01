@@ -42,11 +42,10 @@ def index(request):
     latest_event_list = Event.objects.order_by('-date')[:100]
     #wallets = Wallet.objects.all()
     contracts_list = ArtistContracts.objects.all()
-
+    #starts the connection with Ganache
     w3 = Web3(Web3.HTTPProvider("http://127.0.0.1:7545"))
 
     #reading generic bin and abi contract files.
-
     with open("reservations/contracts/compiled/Likoin.abi") as likoin_abi:
         contract_likoin_abi = json.load(likoin_abi)
 
@@ -69,6 +68,7 @@ def index(request):
 
     template = loader.get_template('reservations/index.html')
     context = {
+        #The context that is passed to the template contains all the abi contract files
         'latest_event_list': latest_event_list,
         'contractABI_likoin': json.dumps(contract_likoin_abi),
         'contractABI_buck': json.dumps(contract_buck_abi),
@@ -356,7 +356,7 @@ def user_reservations(request):
     user_event_list = Like.objects.all()
     like_list = []
     for like in user_event_list:
-        if like.owner.id == request.user.id:
+        if like.owner == request.user:
             like_list.append(like)
 
     event_list = Event.objects.all()

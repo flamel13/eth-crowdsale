@@ -44,4 +44,7 @@ class WalletForm(forms.ModelForm):
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['name', 'crowd_pic', 'description', 'subsStart']
+        fields = ['name', 'crowd_pic', 'description',]
+        labels = {
+            'crowd_pic': ('Image'),
+        }

@@ -42,7 +42,7 @@
       </li>
       {% if user.is_authenticated %}
         <li class="nav-item active">
-          <a class="nav-link" href="{% url 'reservations:add_campaign' %}">Add Campaign<span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="{% url 'reservations:add_campaign' %}">Add post<span class="sr-only">(current)</span></a>
         </li>
           <li class="nav-item active">
             <a class="nav-link" href="{% url 'reservations:upwallet' %}">You are logged as: {{ request.user.username }}<span class="sr-only">(current)</span></a>
@@ -70,7 +70,7 @@
                     <br/>
                     <div class="card">
                       <div class="card-body">
-                        <h2>Latest Projects List 💰</h2>
+                        <h2>Latest posts 💰</h2>
                       </div>
                     </div>
                     <br />
@@ -84,6 +84,7 @@
                               <p class="card-text">{{ event.description }}</p>
                               {% for x in contracts_list %}
                                 {% if event.user == x.artist %}
+                                <!--
                                 <ul class="list-group">
                                   <li class="list-group-item list-group-item-info">Likoin address: {{ x.likoin_address }}</li>
                                 </ul>
@@ -93,6 +94,7 @@
                                 <ul class="list-group">
                                   <li class="list-group-item list-group-item-info">Contract address: {{ x.crowdsale_address }}</li>
                                 </ul>
+                                -->
                                 {% endif %}
                               {% endfor %}
                               <p id="count-{{ event.id }}">{{ event.likes }} Likes</p>
@@ -126,7 +128,8 @@
 
 
                         <script type="text/javascript">
-                          //like function
+                          //like ajax function, takes a response from a view and parse the response.
+                          //The pk value is the id of the gallery that is liked.
                           $(".like").click(function(){
                             var pk = $(this).attr('name')
                             $.ajax({
@@ -145,21 +148,23 @@
                                   var likes = response.like_count;
                                   $("#count-ok-{{ event.id }}").text(likes + " Likes");
 
-
+                                  //If the likes view didn't encounter problems a new session of web3.js is launched.
+                                  //The interaction with MetaMask starts here.
                                   //start web3.js
                                   if (typeof web3 !== "undefined") {
-                                    // Use Mist/MetaMask's provider
+                                    // Use Mist/MetaMask's provider.
+                                    //MetaMask is connected to Ganache Ethereum Emulator
                                     web3 = new Web3(web3.currentProvider);
                                   } else {
                                     console.log("No web3? You should consider trying MetaMask!");
-                                    // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+                                    //If MetaMask is not detected the connection is forwarded to Ganache directly.
                                     web3 = new Web3(
                                       new Web3.providers.HttpProvider("https://localhost:7545")
                                     );
                                   }
 
-                                  // Webjs effective functions.
-
+                                  // Some simple calls for checking the state of the connection
+                                  //These will be print in the console of the browser.
                                   web3.eth.getAccounts(function(error, accounts) {
                                     if (!error) {
                                       web3.eth.getBalance(accounts[0], function(error, balance) {
@@ -171,9 +176,12 @@
 
                                           console.log(response.crowdsale_address);
 
+                                          //Load the abi files of the compiled contracts
                                           var abi = {{ contractABI_crowdsale | safe }};
                                           var abi_coin = {{ contractABI_likoin | safe }};
 
+                                          //Interaction with the stored contracts in the blockchain
+                                          //The Contract method needs the abi interface (json) and the deploy address of the contract
                                           var crowdSale = new web3.eth.Contract(abi, response.crowdsale_address);
                                           var likOin = new web3.eth.Contract(abi_coin, response.likoin_address);
 
@@ -181,10 +189,12 @@
                                           console.log(likOin);
                                           console.log(response.sender_wallet)
 
+                                          //calling a "void" method
                                           likOin.methods.name().call({from: response.sender_wallet}, function(error, result){
                                             console.log(result);
                                           });
 
+                                          //calling a "return" function that have a persistent behaviour in the blockchain
                                           likOin.methods.mint(accounts[0], 10000).send({from: accounts[0]})
                                             .then(function(receipt){
                                                 console.log(receipt);
@@ -204,7 +214,8 @@
                                 }
 
                               },
-                              //need to complete the returned context, actually he enters in the error function for this
+                              //error managing: if the user is not logged the like isn't counted
+                              //nothing is written in the database
                               error: function(request, status){
                                 alert("Devi essere loggato!");
                               },
@@ -230,15 +241,15 @@
     <div class="container-fluid py-3">
         <div class="row">
             <div class="col-md-3">
-                <h5>Footer</h5></div>
+                <h5></h5></div>
             <div class="col-md-3"></div>
             <div class="col-md-3"></div>
             <div class="col-md-3"></div>
         </div>
         <div class="row">
-            <div class="col-md-6"> <img src="https://metamask.io/img/metamask.png" alt="Smiley face" height="42" width="42"> <img src="https://user-images.githubusercontent.com/5788982/27623008-a5e8c956-5bda-11e7-9246-d17205287ad3.png" alt="Smiley face" height="42" width="42"><span class="small"><br>Testo.</span></div>
+            <div class="col-md-6"> <img src=""> <img src="/static/FOOTER.png" alt="Smiley face" height="128" width="300"><span class="small"></div>
             <div class="col-md-3"></div>
-            <div class="col-md-3 text-right small align-self-end">©2018 Nome.</div>
+            <div class="col-md-3 text-right small align-self-end">©2018 LikeStarter.</div>
         </div>
     </div>
 </footer>

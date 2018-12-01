@@ -15,9 +15,9 @@ from django.conf import settings
 from jsonfield import JSONField
 
 class Event(models.Model):
-    name = models.CharField(max_length=200, default='name')
+    name = models.CharField(max_length=200, default='Name')
     crowd_pic = models.ImageField(upload_to = 'reservations/static', default = 'pic_folder/None/no-img.jpg')
-    description = models.CharField(max_length=200, default='name')
+    description = models.CharField(max_length=200, default='Description')
     dates = JSONField(blank=True, null=True)
     subsStart = models.CharField(max_length=200, default='', blank=True, null=True)
     contDeadline = models.CharField(max_length=200, default='', blank=True, null=True)
