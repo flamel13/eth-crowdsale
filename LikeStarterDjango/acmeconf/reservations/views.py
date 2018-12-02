@@ -171,11 +171,11 @@ def register(request):
         Buck = w3.eth.contract(abi=Buck_abi, bytecode=Buck_bin)
 
         Likoin = w3.eth.contract(abi=Likoin_abi, bytecode=Likoin_bin)
-        
+
         Crowdsale = w3.eth.contract(abi=Crowdsale_abi, bytecode=Crowdsale_bin)
-        
+
         Voting = w3.eth.contract(abi=Voting_abi, bytecode=Voting_bin)
-        
+
         ArtifactsManager = w3.eth.contract(abi=ArtifactsManager_abi, bytecode=ArtifactsManager_bin)
         #finish
 
@@ -263,6 +263,31 @@ class EventDetailView(generic.DetailView):
         ctx['reservations'] = EventReservation.objects.all()
         ctx['wallets'] = Wallet.objects.all()
         ctx['contracts'] = ArtistContracts.objects.all()
+
+        #starts the connection with Ganache
+        w3 = Web3(Web3.HTTPProvider("http://127.0.0.1:7545"))
+
+        #reading generic abi contract files.
+        with open("reservations/contracts/compiled/Buck.abi") as Buck_abi_file:
+            Buck_abi = json.load(Buck_abi_file)
+
+        with open("reservations/contracts/compiled/Likoin.abi") as Likoin_abi_file:
+            Likoin_abi = json.load(Likoin_abi_file)
+
+        with open("reservations/contracts/compiled/Crowdsale.abi") as Crowdsale_abi_file:
+            Crowdsale_abi = json.load(Crowdsale_abi_file)
+
+        with open("reservations/contracts/compiled/Voting.abi") as Voting_abi_file:
+            Voting_abi = json.load(Voting_abi_file)
+
+        with open("reservations/contracts/compiled/ArtifactsManager.abi") as ArtifactsManager_abi_file:
+            ArtifactsManager_abi = json.load(ArtifactsManager_abi_file)
+        #finish
+
+        crowdsale_abi = json.dumps(Crowdsale_abi)
+
+        ctx['crowdsale_abi'] = crowdsale_abi
+
         return ctx
 
     #def get(self, request, pk):

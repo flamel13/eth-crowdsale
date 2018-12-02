@@ -81,7 +81,15 @@
                             <img style="height: 250px; object-fit: cover;" class="card-img-top" src="/{{event.crowd_pic.url}}" alt="Card image cap">
                             <div class="card-body">
                               <a href="/reservations/{{ event.id }}/" class="text-danger"><h5 class="card-title">{{ event.name }}</h5></a>
-                              <p class="card-text">{{ event.description }}</p>
+                              <p class="card-text"><b><i>Posted by {{event.user}}</i></b></p>
+                              <!--
+                              <div class="float-right">
+                                <div class="form-group">
+                                  <label for="exampleFormControlInput1">Add a comment</label>
+                                  <input type="email" class="form-control input-lg" id="exampleFormControlInput1">
+                                </div>
+                              </div>
+                              -->
                               {% for x in contracts_list %}
                                 {% if event.user == x.artist %}
                                 <!--
@@ -118,6 +126,7 @@
                                       border-radius: 4px;">
 
                             </div>
+
                           </div>
                         </div>
                         <br />

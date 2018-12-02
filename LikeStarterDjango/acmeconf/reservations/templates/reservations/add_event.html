@@ -6,19 +6,15 @@
   <div class="card-header">
     Add a post and be appreciated!
   </div>
-  <div class="card-body">
-    <h2 class="card-title">Add your post 🖼️</h2>
-    <br/>
-
-    <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="navbar-btn btn-danger btn pull-right">Add Crowdfunding Campaign</button>
-    </form>
-
-
-
-                </div>
-            </div>
-        </div>
+    <div class="card-body">
+      <h2 class="card-title">Add your post 🖼️</h2>
+      <br/>
+      <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="navbar-btn btn-danger btn pull-right">Add post</button>
+      </form>
+      </div>
+    </div>
+  </div>
 {% endblock %}

@@ -15,7 +15,12 @@
 
     {% for x in wallets %}
       {% if x.accountholder == event.user %}
-      <h3> Donate me! </h3>
+      <p>Raised Ethereum:</p>
+      <h2><p id="raised"></h2>
+        <div class="progress">
+          <div id="prog" class="progress-bar" role="progressbar" style="width:" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">&ensp;</div>
+        </div>
+        <br />
       <ul class="list-group">
         <li class="list-group-item list-group-item-success">Wallet address: {{ x.public_key }}</li>
       </ul>
@@ -28,31 +33,57 @@
     {% for x in contracts %}
       {% if x.artist == event.user %}
         <ul class="list-group">
-          <li class="list-group-item list-group-item-action">Likecoin Contract Address: {{ x.likoin_address }}</li>
+          <b>Likecoin Contract Address:</b>
+          <li class="list-group-item list-group-item-action">{{ x.likoin_address }}</li>
         </ul>
+        <br />
         <ul class="list-group">
-          <li class="list-group-item list-group-item-action">Buck Contract Address: {{ x.buck_address }}</li>
+          <b>Buck Contract Address:</b>
+          <li class="list-group-item list-group-item-action">{{ x.buck_address }}</li>
         </ul>
+        <br />
         <ul class="list-group">
-          <li class="list-group-item list-group-item-action">Crowdsale Contract Address: {{ x.crowdsale_address }}</li>
+          <b>Crowdsale Contract Address:</b>
+          <li class="list-group-item list-group-item-action" id="address">{{ x.crowdsale_address }}</li>
         </ul>
       {% endif %}
     {% endfor %}
 
 
-<!--
-
-    {% for x in reservations %}
-      {% if x.user == user.id and x.event == event.id %}
-        <a href="/reservations/{{ event.id }}/delete_confirm"> <button class="btn btn-danger pull-right">Delete Reservation</button></a>
-        <script>$('#book').hide();</script>
-      {% endif %}
-      {% if x.user == user.id and x.event == event.id and x.is_staff == True and event.is_open_contr == True%}
-        <a href="/reservations/{{ event.id }}/upload"> <button class="btn btn-warning">Upload Files</button></a>
-      {% endif %}
-    {% endfor %}
-    -->
 </div>
+
+<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.36/dist/web3.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+<script>
+    if (typeof web3 !== 'undefined') {
+        web3 = new Web3(web3.currentProvider);
+        var abi = {{ crowdsale_abi | safe }};
+
+        myDivObj = document.getElementById("address");
+        if ( myDivObj ) {
+
+          console.log(myDivObj.innerHTML)
+
+          var crowdSale = new web3.eth.Contract(abi, myDivObj.innerHTML);};
+
+          console.log(crowdSale);
+
+          var variabile = 0;
+
+          crowdSale.methods.weiRaised().call({from: web3.eth.accounts[0]}, function(error, result){
+            variabile = web3.utils.fromWei(result);
+            console.log(variabile);
+            $("#raised").text(variabile);
+            $('#prog').width(newprogress).attr('aria-valuenow', variabile);
+          });
+
+
+    } else {
+        // set the provider you want from Web3.providers
+        web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+    }
+</script>
 
 
 
