@@ -147,7 +147,7 @@
                               data: {'pk': pk, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
                               dataType: "json",
                               success: function(response){
-                                alert(response.message);
+                                //alert(response.message);
                                 $("#count-"+pk).html(response.like_count+" Likes");
                                 var users = $("#like-user-"+pk).text();
                                 if(users.indexOf(response.nickname) != -1){
