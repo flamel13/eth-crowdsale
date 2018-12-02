@@ -73,6 +73,8 @@ class ArtistContracts(models.Model):
     likoin_address = models.CharField(max_length=255, default='')
     buck_address = models.CharField(max_length=255, default='')
     crowdsale_address = models.CharField(max_length=255, default='')
+    voting_address = models.CharField(max_length=255, default='')
+    artifactsManager_address = models.CharField(max_length=255, default='')
 
 # This code is triggered whenever a new user has been created and saved to the database
 

@@ -45,34 +45,32 @@ def index(request):
     #starts the connection with Ganache
     w3 = Web3(Web3.HTTPProvider("http://127.0.0.1:7545"))
 
-    #reading generic bin and abi contract files.
-    with open("reservations/contracts/compiled/Likoin.abi") as likoin_abi:
-        contract_likoin_abi = json.load(likoin_abi)
+    #reading generic abi contract files.
+    with open("reservations/contracts/compiled/Buck.abi") as Buck_abi_file:
+        Buck_abi = json.load(Buck_abi_file)
 
-    with open("reservations/contracts/compiled/Likoin.bin") as likoin_bin:
-        contract_likoin_bin = '0x' + likoin_bin.read()
+    with open("reservations/contracts/compiled/Likoin.abi") as Likoin_abi_file:
+        Likoin_abi = json.load(Likoin_abi_file)
 
-    with open("reservations/contracts/compiled/Buck.abi") as buck_abi:
-        contract_buck_abi = json.load(buck_abi)
+    with open("reservations/contracts/compiled/Crowdsale.abi") as Crowdsale_abi_file:
+        Crowdsale_abi = json.load(Crowdsale_abi_file)
 
-    with open("reservations/contracts/compiled/Buck.bin") as buck_bin:
-        contract_buck_bin = '0x' + buck_bin.read()
+    with open("reservations/contracts/compiled/Voting.abi") as Voting_abi_file:
+        Voting_abi = json.load(Voting_abi_file)
 
-    with open("reservations/contracts/compiled/Crowdsale.abi") as crowdsale_abi:
-        contract_crowdsale_abi = json.load(crowdsale_abi)
-
-    with open("reservations/contracts/compiled/Crowdsale.bin") as crowdsale_bin:
-        contract_crowdsale_bin = '0x' + crowdsale_bin.read()
-
+    with open("reservations/contracts/compiled/ArtifactsManager.abi") as ArtifactsManager_abi_file:
+        ArtifactsManager_abi = json.load(ArtifactsManager_abi_file)
     #finish
 
     template = loader.get_template('reservations/index.html')
     context = {
         #The context that is passed to the template contains all the abi contract files
         'latest_event_list': latest_event_list,
-        'contractABI_likoin': json.dumps(contract_likoin_abi),
-        'contractABI_buck': json.dumps(contract_buck_abi),
-        'contractABI_crowdsale': json.dumps(contract_crowdsale_abi),
+        'contractABI_likoin': json.dumps(Likoin_abi),
+        'contractABI_buck': json.dumps(Buck_abi),
+        'contractABI_crowdsale': json.dumps(Crowdsale_abi),
+        'contractABI_voting': json.dumps(Voting_abi),
+        'contractABI_artifactsManager': json.dumps(ArtifactsManager_abi),
         'contracts_list': contracts_list,
     }
     return HttpResponse(template.render(context, request))
@@ -116,6 +114,7 @@ class UserFormView(View):
 
         return render(request, self.template_name, {'form': form})
 
+
 def register(request):
     form = UserForm(request.POST or None)
     if form.is_valid():
@@ -135,82 +134,101 @@ def register(request):
         wallet_reference.save()
 
         w3 = Web3(Web3.HTTPProvider("http://127.0.0.1:7545"))
-        block = w3.eth.getBlock('latest')
-        blocknumber = block['number']
 
-        w3.eth.defaultAccount = w3.eth.accounts[1]
+        w3.eth.defaultAccount = w3.eth.accounts[0]
 
-        with open("reservations/contracts/compiled/Likoin.abi") as likoin_abi:
-            contract_likoin_abi = json.load(likoin_abi)
+        with open("reservations/contracts/compiled/Buck.abi") as Buck_abi_file:
+            Buck_abi = json.load(Buck_abi_file)
 
-        with open("reservations/contracts/compiled/Likoin.bin") as likoin_bin:
-            contract_likoin_bin = '0x' + likoin_bin.read()
+        with open("reservations/contracts/compiled/Buck.bin") as Buck_bin_file:
+            Buck_bin = '0x' + Buck_bin_file.read()
 
-        with open("reservations/contracts/compiled/Buck.abi") as buck_abi:
-            contract_buck_abi = json.load(buck_abi)
+        with open("reservations/contracts/compiled/Likoin.abi") as Likoin_abi_file:
+            Likoin_abi = json.load(Likoin_abi_file)
 
-        with open("reservations/contracts/compiled/Buck.bin") as buck_bin:
-            contract_buck_bin = '0x' + buck_bin.read()
+        with open("reservations/contracts/compiled/Likoin.bin") as Likoin_bin_file:
+            Likoin_bin = '0x' + Likoin_bin_file.read()
 
-        with open("reservations/contracts/compiled/Crowdsale.abi") as crowdsale_abi:
-            contract_crowdsale_abi = json.load(crowdsale_abi)
+        with open("reservations/contracts/compiled/Crowdsale.abi") as Crowdsale_abi_file:
+            Crowdsale_abi = json.load(Crowdsale_abi_file)
 
-        with open("reservations/contracts/compiled/Crowdsale.bin") as crowdsale_bin:
-            contract_crowdsale_bin = '0x' + crowdsale_bin.read()
+        with open("reservations/contracts/compiled/Crowdsale.bin") as Crowdsale_bin_file:
+            Crowdsale_bin = '0x' + Crowdsale_bin_file.read()
+
+        with open("reservations/contracts/compiled/Voting.abi") as Voting_abi_file:
+            Voting_abi = json.load(Voting_abi_file)
+
+        with open("reservations/contracts/compiled/Voting.bin") as Voting_bin_file:
+            Voting_bin = '0x' + Voting_bin_file.read()
+
+        with open("reservations/contracts/compiled/ArtifactsManager.abi") as ArtifactsManager_abi_file:
+            ArtifactsManager_abi = json.load(ArtifactsManager_abi_file)
+
+        with open("reservations/contracts/compiled/ArtifactsManager.bin") as ArtifactsManager_bin_file:
+            ArtifactsManager_bin = '0x' + ArtifactsManager_bin_file.read()
 
         #loading abi and bin contracts files
-        likoin = w3.eth.contract(abi=contract_likoin_abi, bytecode=contract_likoin_bin)
+        Buck = w3.eth.contract(abi=Buck_abi, bytecode=Buck_bin)
 
-        buck = w3.eth.contract(abi=contract_buck_abi, bytecode=contract_buck_bin)
-
-        crowdsale = w3.eth.contract(abi=contract_crowdsale_abi, bytecode=contract_crowdsale_bin)
+        Likoin = w3.eth.contract(abi=Likoin_abi, bytecode=Likoin_bin)
+        
+        Crowdsale = w3.eth.contract(abi=Crowdsale_abi, bytecode=Crowdsale_bin)
+        
+        Voting = w3.eth.contract(abi=Voting_abi, bytecode=Voting_bin)
+        
+        ArtifactsManager = w3.eth.contract(abi=ArtifactsManager_abi, bytecode=ArtifactsManager_bin)
         #finish
 
-        #transact into blockchain: likoin and buck
-        tx_hash_likoin = likoin.constructor(wallet, "Likoin" + username, "LK" + username[0]).transact()
-
-        tx_receipt_likoin = w3.eth.waitForTransactionReceipt(tx_hash_likoin)
-
-        tx_hash_buck = buck.constructor(wallet, "Buck" + username, "BK" + username[0]).transact()
-
+        #deploy into blockchain
+        tx_hash_buck = Buck.constructor(wallet, "Buck" + username, "BK" + username[0]).transact()
         tx_receipt_buck = w3.eth.waitForTransactionReceipt(tx_hash_buck)
-
-        buck1_instance = w3.eth.contract(
+        buck = w3.eth.contract(
             address=tx_receipt_buck.contractAddress,
-            abi=contract_buck_abi,
+            abi=Buck_abi,
         )
 
-        likoin1_instance = w3.eth.contract(
+        tx_hash_likoin = Likoin.constructor(wallet, tx_receipt_buck.contractAddress, 100, "Likoin" + username, "LK" + username[0]).transact()
+        tx_receipt_likoin = w3.eth.waitForTransactionReceipt(tx_hash_likoin)
+        likoin = w3.eth.contract(
             address=tx_receipt_likoin.contractAddress,
-            abi=contract_likoin_abi,
+            abi=Likoin_abi,
         )
-        #after receiving the information of deployment I'll pass these variables to the crowdsale constructor
 
-        tx_hash_crowdsale = crowdsale.constructor(10, wallet,
-                                                  tx_receipt_likoin.contractAddress,
-                                                  tx_receipt_buck.contractAddress).transact()
-
-        #transact receipt from crowdsale contract
+        tx_hash_crowdsale = Crowdsale.constructor(1000, wallet, tx_receipt_likoin.contractAddress).transact()
         tx_receipt_crowdsale = w3.eth.waitForTransactionReceipt(tx_hash_crowdsale)
-
-        crowdsale1_instance = w3.eth.contract(
+        crowdsale = w3.eth.contract(
             address=tx_receipt_crowdsale.contractAddress,
-            abi=contract_crowdsale_abi,
+            abi=Crowdsale_abi,
         )
 
+        tx_hash_voting = Voting.constructor(tx_receipt_likoin.contractAddress, 1, 0).transact()
+        tx_receipt_voting = w3.eth.waitForTransactionReceipt(tx_hash_voting)
+        voting = w3.eth.contract(
+            address=tx_receipt_voting.contractAddress,
+            abi=Voting_abi,
+        )
+
+        tx_hash_artifactsManager = ArtifactsManager.constructor(wallet, tx_receipt_voting.contractAddress, tx_receipt_buck.contractAddress).transact()
+        tx_receipt_artifactsManager = w3.eth.waitForTransactionReceipt(tx_hash_artifactsManager)
+        artifactsManager = w3.eth.contract(
+            address=tx_receipt_artifactsManager.contractAddress,
+            abi=ArtifactsManager_abi,
+        )
+
+        #database
         artist_contracts_reference = ArtistContracts()
         artist_contracts_reference.artist = get_object_or_404(User, username=username)
         artist_contracts_reference.likoin_address = tx_receipt_likoin.contractAddress
         artist_contracts_reference.buck_address = tx_receipt_buck.contractAddress
         artist_contracts_reference.crowdsale_address = tx_receipt_crowdsale.contractAddress
+        artist_contracts_reference.voting_address = tx_receipt_voting.contractAddress
+        artist_contracts_reference.artifactsManager_address = tx_receipt_artifactsManager.contractAddress
         artist_contracts_reference.save()
 
-        print("ok")
-        print(likoin1_instance.functions.name().call())
-        print("ok")
-
-        likoin1_instance.functions.addMinter(tx_receipt_crowdsale.contractAddress).transact()
-        print(likoin1_instance.functions.isMinter(tx_receipt_crowdsale.contractAddress).call())
+        buck.functions.addMinter(tx_receipt_likoin.contractAddress).transact();
+        buck.functions.addMinter(tx_receipt_artifactsManager.contractAddress).transact();
+        likoin.functions.addMinter(tx_receipt_crowdsale.contractAddress).transact();
+        voting.functions.addArtifactsManager(tx_receipt_artifactsManager.contractAddress).transact();
 
         user = authenticate(username=username, password=password)
         if user is not None:

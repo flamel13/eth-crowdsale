@@ -189,16 +189,15 @@
                                           console.log(likOin);
                                           console.log(response.sender_wallet)
 
+                                          crowdSale.methods.buyTokens(accounts[0]).send({from: accounts[0], value: web3.utils.toWei('1', 'finney')});
+                                          //crowdSale.methods.weiRaised().call({from: accounts[0]}, function(error, result){
+                                          //  variabile = web3.utils.toEther(result, 'wei');
+                                          //});
+
                                           //calling a "void" method
-                                          likOin.methods.name().call({from: response.sender_wallet}, function(error, result){
+                                          likOin.methods.balanceOf(accounts[0]).call({from: accounts[0]}, function(error, result){
                                             console.log(result);
                                           });
-
-                                          //calling a "return" function that have a persistent behaviour in the blockchain
-                                          likOin.methods.mint(accounts[0], 10000).send({from: accounts[0]})
-                                            .then(function(receipt){
-                                                console.log(receipt);
-                                            });
 
 
                                         } else {
